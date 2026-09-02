@@ -1,0 +1,52 @@
+[
+  {
+    "id": "s1",
+    "name": "Riverside Office Tower",
+    "address": "88 Riverside Quay, Southbank VIC",
+    "status": "active",
+    "membersCount": 6,
+    "unreadCount": 3,
+    "lastActivity": "2026-08-27T07:45:00Z",
+    "tasksOpen": 4
+  },
+  {
+    "id": "s2",
+    "name": "Harbourview Apartments",
+    "address": "12 Dock Street, Docklands VIC",
+    "status": "active",
+    "membersCount": 4,
+    "unreadCount": 0,
+    "lastActivity": "2026-08-26T15:10:00Z",
+    "tasksOpen": 1
+  },
+  {
+    "id": "s3",
+    "name": "Greenfield Shopping Centre",
+    "address": "200 Greenfield Rd, Clayton VIC",
+    "status": "paused",
+    "membersCount": 8,
+    "unreadCount": 1,
+    "lastActivity": "2026-08-25T11:00:00Z",
+    "tasksOpen": 2
+  },
+  {
+    "id": "s4",
+    "name": "Sunset Medical Centre",
+    "address": "5 Wellness Ave, Box Hill VIC",
+    "status": "active",
+    "membersCount": 3,
+    "unreadCount": 5,
+    "lastActivity": "2026-08-27T08:20:00Z",
+    "tasksOpen": 6
+  },
+  {
+    "id": "s5",
+    "name": "Northgate Warehouse",
+    "address": "77 Industrial Way, Tullamarine VIC",
+    "status": "completed",
+    "membersCount": 5,
+    "unreadCount": 0,
+    "lastActivity": "2026-08-20T09:00:00Z",
+    "tasksOpen": 0
+  }
+]

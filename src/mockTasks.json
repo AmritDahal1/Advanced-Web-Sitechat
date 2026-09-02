@@ -1,0 +1,182 @@
+[
+  {
+    "id": "t1",
+    "siteId": "s1",
+    "text": "Restock Level 12 restrooms",
+    "done": false,
+    "createdAt": "2026-08-26T07:00:00Z",
+    "priority": "high",
+    "assigneeId": "u1"
+  },
+  {
+    "id": "t2",
+    "siteId": "s1",
+    "text": "Vacuum lobby carpet",
+    "done": false,
+    "createdAt": "2026-08-26T07:05:00Z",
+    "priority": "medium",
+    "assigneeId": "u2"
+  },
+  {
+    "id": "t3",
+    "siteId": "s1",
+    "text": "Clean glass entrance doors",
+    "done": false,
+    "createdAt": "2026-08-26T07:10:00Z",
+    "priority": "low",
+    "assigneeId": "u3"
+  },
+  {
+    "id": "t4",
+    "siteId": "s1",
+    "text": "Empty recycling bins, all floors",
+    "done": false,
+    "createdAt": "2026-08-26T07:15:00Z",
+    "priority": "high",
+    "assigneeId": "u4"
+  },
+  {
+    "id": "t5",
+    "siteId": "s1",
+    "text": "Wipe down elevator buttons",
+    "done": true,
+    "createdAt": "2026-08-25T09:00:00Z",
+    "priority": "medium",
+    "assigneeId": "u1"
+  },
+  {
+    "id": "t6",
+    "siteId": "s1",
+    "text": "Mop ground floor lobby",
+    "done": true,
+    "createdAt": "2026-08-25T09:10:00Z",
+    "priority": "low",
+    "assigneeId": "u2"
+  },
+  {
+    "id": "t7",
+    "siteId": "s2",
+    "text": "Replace air freshener in hallway",
+    "done": false,
+    "createdAt": "2026-08-26T10:00:00Z",
+    "priority": "high",
+    "assigneeId": "u3"
+  },
+  {
+    "id": "t8",
+    "siteId": "s2",
+    "text": "Clean pool deck",
+    "done": true,
+    "createdAt": "2026-08-24T09:00:00Z",
+    "priority": "medium",
+    "assigneeId": "u4"
+  },
+  {
+    "id": "t9",
+    "siteId": "s3",
+    "text": "Sweep food court",
+    "done": false,
+    "createdAt": "2026-08-25T08:00:00Z",
+    "priority": "low",
+    "assigneeId": "u1"
+  },
+  {
+    "id": "t10",
+    "siteId": "s3",
+    "text": "Clean restroom mirrors",
+    "done": false,
+    "createdAt": "2026-08-25T08:10:00Z",
+    "priority": "high",
+    "assigneeId": "u2"
+  },
+  {
+    "id": "t11",
+    "siteId": "s3",
+    "text": "Empty bins in car park",
+    "done": true,
+    "createdAt": "2026-08-24T08:00:00Z",
+    "priority": "medium",
+    "assigneeId": "u3"
+  },
+  {
+    "id": "t12",
+    "siteId": "s4",
+    "text": "Sanitise waiting room chairs",
+    "done": false,
+    "createdAt": "2026-08-27T06:00:00Z",
+    "priority": "low",
+    "assigneeId": "u4"
+  },
+  {
+    "id": "t13",
+    "siteId": "s4",
+    "text": "Disinfect reception desk",
+    "done": false,
+    "createdAt": "2026-08-27T06:05:00Z",
+    "priority": "high",
+    "assigneeId": "u1"
+  },
+  {
+    "id": "t14",
+    "siteId": "s4",
+    "text": "Mop Ward B floor",
+    "done": false,
+    "createdAt": "2026-08-27T06:10:00Z",
+    "priority": "medium",
+    "assigneeId": "u2"
+  },
+  {
+    "id": "t15",
+    "siteId": "s4",
+    "text": "Restock hand sanitiser stations",
+    "done": false,
+    "createdAt": "2026-08-27T06:15:00Z",
+    "priority": "low",
+    "assigneeId": "u3"
+  },
+  {
+    "id": "t16",
+    "siteId": "s4",
+    "text": "Clean windows, ground floor",
+    "done": false,
+    "createdAt": "2026-08-27T06:20:00Z",
+    "priority": "high",
+    "assigneeId": "u4"
+  },
+  {
+    "id": "t17",
+    "siteId": "s4",
+    "text": "Vacuum carpet in admin office",
+    "done": false,
+    "createdAt": "2026-08-27T06:25:00Z",
+    "priority": "medium",
+    "assigneeId": "u1"
+  },
+  {
+    "id": "t18",
+    "siteId": "s4",
+    "text": "Empty sharps bins",
+    "done": true,
+    "createdAt": "2026-08-26T09:00:00Z",
+    "priority": "low",
+    "assigneeId": "u2"
+  },
+  {
+    "id": "t19",
+    "siteId": "s5",
+    "text": "Sweep loading dock",
+    "done": true,
+    "createdAt": "2026-08-19T09:00:00Z",
+    "priority": "high",
+    "assigneeId": "u3"
+  },
+  {
+    "id": "t20",
+    "siteId": "s5",
+    "text": "Clean staff break room",
+    "done": true,
+    "createdAt": "2026-08-19T09:10:00Z",
+    "priority": "medium",
+    "assigneeId": "u4"
+  }
+]

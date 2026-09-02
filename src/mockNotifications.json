@@ -1,0 +1,7 @@
+[
+  { "id": "n1", "siteId": "s1", "type": "message", "text": "New message from Sujit Budhathoki in Riverside Office Tower", "time": "2026-08-27T07:40:00Z", "read": false },
+  { "id": "n2", "siteId": "s4", "type": "task", "text": "New task assigned: Deep clean waiting room carpet", "time": "2026-08-27T08:10:00Z", "read": false },
+  { "id": "n3", "siteId": "s3", "type": "status", "text": "Greenfield Shopping Centre status changed to Paused", "time": "2026-08-25T11:00:00Z", "read": true },
+  { "id": "n4", "siteId": "s2", "type": "message", "text": "New message from Amrit Dahal in Harbourview Apartments", "time": "2026-08-26T15:10:00Z", "read": true },
+  { "id": "n5", "siteId": "s4", "type": "message", "text": "New message from Amrit Dahal in Sunset Medical Centre", "time": "2026-08-27T08:20:00Z", "read": false }
+]

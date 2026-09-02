@@ -1,0 +1,34 @@
+[
+  {
+    "id": "u1",
+    "name": "Amrit Dahal",
+    "role": "Site Supervisor",
+    "email": "amrit.dahal@cleantasker.com",
+    "avatarColor": "#2563eb",
+    "password": "password123"
+  },
+  {
+    "id": "u2",
+    "name": "Subham Giri",
+    "role": "Field Cleaner",
+    "email": "subham.giri@cleantasker.com",
+    "avatarColor": "#059669",
+    "password": "password123"
+  },
+  {
+    "id": "u3",
+    "name": "Madhab Poudel",
+    "role": "Operations Manager",
+    "email": "madhab.poudel@cleantasker.com",
+    "avatarColor": "#d97706",
+    "password": "password123"
+  },
+  {
+    "id": "u4",
+    "name": "Sujit Budhathoki",
+    "role": "Field Cleaner",
+    "email": "sujit.budhathoki@cleantasker.com",
+    "avatarColor": "#7c3aed",
+    "password": "password123"
+  }
+]
