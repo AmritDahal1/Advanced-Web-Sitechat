@@ -101,7 +101,7 @@ export default function SiteDetail() {
     error: messagesError,
     setData: setMessages
   } = useFetch(() => fetchMessages(siteId), [siteId]);
-  const { data: users } = useFetch(fetchUsers, []);
+  const { data: users, loading: usersLoading, error: usersError } = useFetch(fetchUsers, []);
   const {
     data: tasks,
     loading: tasksLoading,
@@ -524,20 +524,24 @@ export default function SiteDetail() {
           </div>
 
           <div className="panel">
-            <h2>Team ({users?.length || 0})</h2>
-            <ul className="team-list">
-              {(users || []).map((u) => (
-                <li key={u.id} className="team-list-row">
-                  <span className="avatar avatar-sm" style={{ background: u.avatarColor }} aria-hidden="true">
-                    {u.name.charAt(0)}
-                  </span>
-                  <div>
-                    <strong>{u.name}</strong>
-                    <div className="muted small">{u.role}</div>
-                  </div>
-                </li>
-              ))}
-            </ul>
+            <h2>Team {users && `(${users.length})`}</h2>
+            {usersLoading && <LoadingSpinner label="Loading team…" />}
+            {usersError && <ErrorMessage message={usersError} />}
+            {!usersLoading && !usersError && (
+              <ul className="team-list">
+                {(users || []).map((u) => (
+                  <li key={u.id} className="team-list-row">
+                    <span className="avatar avatar-sm" style={{ background: u.avatarColor }} aria-hidden="true">
+                      {u.name.charAt(0)}
+                    </span>
+                    <div>
+                      <strong>{u.name}</strong>
+                      <div className="muted small">{u.role}</div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </aside>
       </div>
