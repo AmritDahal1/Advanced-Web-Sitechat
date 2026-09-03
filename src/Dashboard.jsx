@@ -52,22 +52,26 @@ export default function Dashboard() {
                 <h2>Your sites</h2>
                 <Link to="/dashboard/sites" className="link">View all →</Link>
               </div>
-              <ul className="list">
-                {sites.slice(0, 4).map((site) => (
-                  <li key={site.id}>
-                    <Link to={`/dashboard/sites/${site.id}`} className="list-row">
-                      <div>
-                        <strong>{site.name}</strong>
-                        <p className="muted small">{site.address}</p>
-                      </div>
-                      <div className="list-row-meta">
-                        <Badge status={site.status} />
-                        <Badge count={site.unreadCount} />
-                      </div>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+              {sites.length === 0 ? (
+                <p className="muted empty-state">No sites yet.</p>
+              ) : (
+                <ul className="list">
+                  {sites.slice(0, 4).map((site) => (
+                    <li key={site.id}>
+                      <Link to={`/dashboard/sites/${site.id}`} className="list-row">
+                        <div>
+                          <strong>{site.name}</strong>
+                          <p className="muted small">{site.address}</p>
+                        </div>
+                        <div className="list-row-meta">
+                          <Badge status={site.status} />
+                          <Badge count={site.unreadCount} />
+                        </div>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
 
             <div className="panel">
