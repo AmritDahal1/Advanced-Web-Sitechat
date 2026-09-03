@@ -2011,6 +2011,24 @@ button {
 }
 
 @media (max-width: 480px) {
+  .navbar {
+    padding: 0 12px;
+  }
+
+  .navbar-left,
+  .navbar-right {
+    gap: 6px;
+  }
+
+  .user-chip {
+    gap: 6px;
+    padding-left: 6px;
+  }
+
+  .user-chip .avatar {
+    display: none;
+  }
+
   .stat-grid {
     grid-template-columns: 1fr;
   }
