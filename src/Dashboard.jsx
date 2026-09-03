@@ -5,7 +5,7 @@ import { useApp } from './AppContext';
 import { LoadingSpinner, ErrorMessage, Badge } from './UI';
 
 export default function Dashboard() {
-  const { user, notifications, notificationsLoading } = useApp();
+  const { user, notifications, notificationsLoading, notificationsError, loadNotifications } = useApp();
   const { data: sites, loading, error, refetch } = useFetch(fetchSites, []);
 
   const activeCount = sites?.filter((s) => s.status === 'active').length ?? 0;
@@ -77,6 +77,8 @@ export default function Dashboard() {
               </div>
               {notificationsLoading ? (
                 <LoadingSpinner label="Loading notifications…" />
+              ) : notificationsError ? (
+                <ErrorMessage message={notificationsError} onRetry={loadNotifications} />
               ) : recentNotifications.length === 0 ? (
                 <p className="muted">No notifications yet.</p>
               ) : (

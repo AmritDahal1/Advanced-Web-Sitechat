@@ -12,6 +12,7 @@ const initialState = {
   theme: 'light',
   notifications: [],
   notificationsLoading: false,
+  notificationsError: null,
   toast: null
 };
 
@@ -26,9 +27,11 @@ function reducer(state, action) {
     case 'TOGGLE_THEME':
       return { ...state, theme: state.theme === 'light' ? 'dark' : 'light' };
     case 'SET_NOTIFICATIONS':
-      return { ...state, notifications: action.payload, notificationsLoading: false };
+      return { ...state, notifications: action.payload, notificationsLoading: false, notificationsError: null };
     case 'SET_NOTIFICATIONS_LOADING':
-      return { ...state, notificationsLoading: true };
+      return { ...state, notificationsLoading: true, notificationsError: null };
+    case 'SET_NOTIFICATIONS_ERROR':
+      return { ...state, notificationsLoading: false, notificationsError: action.payload };
     case 'SHOW_TOAST':
       return { ...state, toast: action.payload };
     case 'CLEAR_TOAST':
@@ -79,8 +82,8 @@ export function AppProvider({ children }) {
     try {
       const data = await fetchNotifications();
       dispatch({ type: 'SET_NOTIFICATIONS', payload: data });
-    } catch {
-      dispatch({ type: 'SET_NOTIFICATIONS', payload: [] });
+    } catch (err) {
+      dispatch({ type: 'SET_NOTIFICATIONS_ERROR', payload: err.message || 'Unable to load notifications.' });
     }
   }, []);
 

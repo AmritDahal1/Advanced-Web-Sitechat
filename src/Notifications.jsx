@@ -15,7 +15,7 @@ function formatTime(iso) {
 }
 
 export default function Notifications() {
-  const { notifications, notificationsLoading, markRead, markAllRead } = useApp();
+  const { notifications, notificationsLoading, notificationsError, loadNotifications, markRead, markAllRead } = useApp();
   const [showUnreadOnly, setShowUnreadOnly] = useState(false);
 
   const visibleNotifications = useMemo(
@@ -48,11 +48,15 @@ export default function Notifications() {
 
       {notificationsLoading && <LoadingSpinner label="Loading notifications…" />}
 
-      {!notificationsLoading && visibleNotifications.length === 0 && (
+      {!notificationsLoading && notificationsError && (
+        <ErrorMessage message={notificationsError} onRetry={loadNotifications} />
+      )}
+
+      {!notificationsLoading && !notificationsError && visibleNotifications.length === 0 && (
         <p className="muted empty-state">You&rsquo;re all caught up!</p>
       )}
 
-      {!notificationsLoading && visibleNotifications.length > 0 && (
+      {!notificationsLoading && !notificationsError && visibleNotifications.length > 0 && (
         <ul className="notification-list">
           {visibleNotifications.map((n) => (
             <li key={n.id} className={`notification-item ${n.read ? '' : 'notification-item-unread'}`}>
