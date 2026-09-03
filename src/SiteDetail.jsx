@@ -165,6 +165,7 @@ export default function SiteDetail() {
   }
 
   async function handleToggleLike(messageId) {
+    const previousMessages = messages;
     setMessages((prev) =>
       (prev || []).map((m) => {
         if (m.id !== messageId) return m;
@@ -176,6 +177,7 @@ export default function SiteDetail() {
     try {
       await toggleMessageReaction(siteId, messageId, user.id);
     } catch (err) {
+      setMessages(previousMessages);
       showToast(err.message, 'error');
     }
   }
@@ -199,21 +201,25 @@ export default function SiteDetail() {
   }
 
   async function handleToggleTask(taskId) {
+    const previousTasks = tasks;
     setTasks((prev) =>
       (prev || []).map((t) => (t.id === taskId ? { ...t, done: !t.done } : t))
     );
     try {
       await toggleTask(taskId);
     } catch (err) {
+      setTasks(previousTasks);
       showToast(err.message, 'error');
     }
   }
 
   async function handleDeleteTask(taskId) {
+    const previousTasks = tasks;
     setTasks((prev) => (prev || []).filter((t) => t.id !== taskId));
     try {
       await deleteTask(taskId);
     } catch (err) {
+      setTasks(previousTasks);
       showToast(err.message, 'error');
     }
   }
