@@ -93,7 +93,7 @@ export default function Home() {
           </div>
           <div className="hero-stats">
             <div className="hero-stat">
-              <strong>5</strong>
+              <strong>3</strong>
               <span>active job sites</span>
             </div>
             <div className="hero-stat">
