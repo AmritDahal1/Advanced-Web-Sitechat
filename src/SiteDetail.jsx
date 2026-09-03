@@ -91,7 +91,7 @@ export default function SiteDetail() {
   const bottomRef = useRef(null);
   const fileInputRef = useRef(null);
 
-  const { data: site, loading: siteLoading, error: siteError } = useFetch(
+  const { data: site, loading: siteLoading, error: siteError, refetch: refetchSite } = useFetch(
     () => fetchSiteById(siteId),
     [siteId]
   );
@@ -99,13 +99,15 @@ export default function SiteDetail() {
     data: messages,
     loading: messagesLoading,
     error: messagesError,
+    refetch: refetchMessages,
     setData: setMessages
   } = useFetch(() => fetchMessages(siteId), [siteId]);
-  const { data: users, loading: usersLoading, error: usersError } = useFetch(fetchUsers, []);
+  const { data: users, loading: usersLoading, error: usersError, refetch: refetchUsers } = useFetch(fetchUsers, []);
   const {
     data: tasks,
     loading: tasksLoading,
     error: tasksError,
+    refetch: refetchTasks,
     setData: setTasks
   } = useFetch(() => fetchTasks(siteId), [siteId]);
 
@@ -245,7 +247,7 @@ export default function SiteDetail() {
   const groupedDays = messages ? groupMessages(messages) : [];
 
   if (siteLoading) return <LoadingSpinner label="Loading site…" />;
-  if (siteError) return <ErrorMessage message={siteError} />;
+  if (siteError) return <ErrorMessage message={siteError} onRetry={refetchSite} />;
 
   return (
     <div className="page site-page">
@@ -284,7 +286,7 @@ export default function SiteDetail() {
             <div className="chat-page">
               <div className="chat-window">
                 {messagesLoading && <LoadingSpinner label="Loading messages…" />}
-                {messagesError && <ErrorMessage message={messagesError} />}
+                {messagesError && <ErrorMessage message={messagesError} onRetry={refetchMessages} />}
 
                 {!messagesLoading && !messagesError && (
                   <>
@@ -446,7 +448,7 @@ export default function SiteDetail() {
               </div>
 
               {tasksLoading && <LoadingSpinner label="Loading tasks…" />}
-              {tasksError && <ErrorMessage message={tasksError} />}
+              {tasksError && <ErrorMessage message={tasksError} onRetry={refetchTasks} />}
 
               {!tasksLoading && !tasksError && (
                 visibleTasks.length === 0 ? (
@@ -532,7 +534,7 @@ export default function SiteDetail() {
           <div className="panel">
             <h2>Team {users && `(${users.length})`}</h2>
             {usersLoading && <LoadingSpinner label="Loading team…" />}
-            {usersError && <ErrorMessage message={usersError} />}
+            {usersError && <ErrorMessage message={usersError} onRetry={refetchUsers} />}
             {!usersLoading && !usersError && (
               <ul className="team-list">
                 {(users || []).map((u) => (
