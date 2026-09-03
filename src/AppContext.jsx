@@ -19,6 +19,8 @@ function reducer(state, action) {
   switch (action.type) {
     case 'LOGIN':
       return { ...state, user: action.payload };
+    case 'UPDATE_USER':
+      return { ...state, user: { ...state.user, ...action.payload } };
     case 'LOGOUT':
       return { ...state, user: null };
     case 'TOGGLE_THEME':
@@ -62,6 +64,7 @@ export function AppProvider({ children }) {
   }, [state.user]);
 
   const login = useCallback((user) => dispatch({ type: 'LOGIN', payload: user }), []);
+  const updateUser = useCallback((updates) => dispatch({ type: 'UPDATE_USER', payload: updates }), []);
   const logout = useCallback(() => dispatch({ type: 'LOGOUT' }), []);
   const toggleTheme = useCallback(() => dispatch({ type: 'TOGGLE_THEME' }), []);
 
@@ -115,6 +118,7 @@ export function AppProvider({ children }) {
       ...state,
       unreadCount,
       login,
+      updateUser,
       logout,
       toggleTheme,
       showToast,
@@ -123,7 +127,7 @@ export function AppProvider({ children }) {
       markRead,
       markAllRead
     }),
-    [state, unreadCount, login, logout, toggleTheme, showToast, clearToast, loadNotifications, markRead, markAllRead]
+    [state, unreadCount, login, updateUser, logout, toggleTheme, showToast, clearToast, loadNotifications, markRead, markAllRead]
   );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useApp } from './AppContext';
 
 export default function Profile() {
-  const { user, theme, toggleTheme, showToast } = useApp();
+  const { user, theme, toggleTheme, updateUser, showToast } = useApp();
   const [form, setForm] = useState({ name: user?.name || '', email: user?.email || '' });
   const [errors, setErrors] = useState({});
   const [emailAlerts, setEmailAlerts] = useState(true);
@@ -26,6 +26,7 @@ export default function Profile() {
     const validationErrors = validate();
     setErrors(validationErrors);
     if (Object.keys(validationErrors).length > 0) return;
+    updateUser({ name: form.name.trim(), email: form.email.trim() });
     showToast('Profile details saved.', 'success');
   }
 
