@@ -5,7 +5,7 @@ import { useApp } from './AppContext';
 import { LoadingSpinner, ErrorMessage, Badge } from './UI';
 
 export default function Dashboard() {
-  const { user, notifications } = useApp();
+  const { user, notifications, notificationsLoading } = useApp();
   const { data: sites, loading, error, refetch } = useFetch(fetchSites, []);
 
   const activeCount = sites?.filter((s) => s.status === 'active').length ?? 0;
@@ -75,7 +75,9 @@ export default function Dashboard() {
                 <h2>Recent notifications</h2>
                 <Link to="/dashboard/notifications" className="link">View all →</Link>
               </div>
-              {recentNotifications.length === 0 ? (
+              {notificationsLoading ? (
+                <LoadingSpinner label="Loading notifications…" />
+              ) : recentNotifications.length === 0 ? (
                 <p className="muted">No notifications yet.</p>
               ) : (
                 <ul className="list">
