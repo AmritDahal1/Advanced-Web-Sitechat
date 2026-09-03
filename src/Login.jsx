@@ -105,6 +105,7 @@ export default function Login() {
             <li>amrit.dahal@cleantasker.com — Site Supervisor</li>
             <li>madhab.poudel@cleantasker.com — Operations Manager</li>
             <li>subham.giri@cleantasker.com — Field Cleaner</li>
+            <li>sujit.budhathoki@cleantasker.com — Field Cleaner</li>
           </ul>
         </div>
       </div>
