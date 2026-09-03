@@ -55,8 +55,15 @@ export default function Profile() {
           <form onSubmit={handleSubmit} noValidate>
             <div className="form-field">
               <label htmlFor="name">Full name</label>
-              <input id="name" name="name" value={form.name} onChange={handleChange} aria-invalid={!!errors.name} />
-              {errors.name && <span className="field-error">{errors.name}</span>}
+              <input
+                id="name"
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                aria-invalid={!!errors.name}
+                aria-describedby={errors.name ? 'name-error' : undefined}
+              />
+              {errors.name && <span className="field-error" id="name-error">{errors.name}</span>}
             </div>
             <div className="form-field">
               <label htmlFor="profile-email">Email</label>
@@ -67,8 +74,9 @@ export default function Profile() {
                 value={form.email}
                 onChange={handleChange}
                 aria-invalid={!!errors.email}
+                aria-describedby={errors.email ? 'profile-email-error' : undefined}
               />
-              {errors.email && <span className="field-error">{errors.email}</span>}
+              {errors.email && <span className="field-error" id="profile-email-error">{errors.email}</span>}
             </div>
             <button type="submit" className="btn btn-primary">Save changes</button>
           </form>

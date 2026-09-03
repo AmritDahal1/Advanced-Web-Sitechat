@@ -155,13 +155,27 @@ function CreateSiteModal({ isOpen, onClose, onCreated }) {
       <form onSubmit={handleSubmit} noValidate>
         <div className="form-field">
           <label htmlFor="site-name">Site name</label>
-          <input id="site-name" name="name" value={form.name} onChange={handleChange} aria-invalid={!!errors.name} />
-          {errors.name && <span className="field-error">{errors.name}</span>}
+          <input
+            id="site-name"
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+            aria-invalid={!!errors.name}
+            aria-describedby={errors.name ? 'site-name-error' : undefined}
+          />
+          {errors.name && <span className="field-error" id="site-name-error">{errors.name}</span>}
         </div>
         <div className="form-field">
           <label htmlFor="site-address">Address</label>
-          <input id="site-address" name="address" value={form.address} onChange={handleChange} aria-invalid={!!errors.address} />
-          {errors.address && <span className="field-error">{errors.address}</span>}
+          <input
+            id="site-address"
+            name="address"
+            value={form.address}
+            onChange={handleChange}
+            aria-invalid={!!errors.address}
+            aria-describedby={errors.address ? 'site-address-error' : undefined}
+          />
+          {errors.address && <span className="field-error" id="site-address-error">{errors.address}</span>}
         </div>
         <div className="form-field">
           <label htmlFor="site-members">Team members</label>
@@ -173,8 +187,9 @@ function CreateSiteModal({ isOpen, onClose, onCreated }) {
             value={form.membersCount}
             onChange={handleChange}
             aria-invalid={!!errors.membersCount}
+            aria-describedby={errors.membersCount ? 'site-members-error' : undefined}
           />
-          {errors.membersCount && <span className="field-error">{errors.membersCount}</span>}
+          {errors.membersCount && <span className="field-error" id="site-members-error">{errors.membersCount}</span>}
         </div>
 
         {serverError && <div className="error-box" role="alert">⚠ {serverError}</div>}
