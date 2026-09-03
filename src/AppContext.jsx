@@ -82,16 +82,24 @@ export function AppProvider({ children }) {
   }, []);
 
   const markRead = useCallback(async (id) => {
-    await markNotificationRead(id);
-    const data = await fetchNotifications();
-    dispatch({ type: 'SET_NOTIFICATIONS', payload: data });
-  }, []);
+    try {
+      await markNotificationRead(id);
+      const data = await fetchNotifications();
+      dispatch({ type: 'SET_NOTIFICATIONS', payload: data });
+    } catch (err) {
+      showToast(err.message || 'Unable to mark notification as read.', 'error');
+    }
+  }, [showToast]);
 
   const markAllRead = useCallback(async () => {
-    await markAllNotificationsRead();
-    const data = await fetchNotifications();
-    dispatch({ type: 'SET_NOTIFICATIONS', payload: data });
-  }, []);
+    try {
+      await markAllNotificationsRead();
+      const data = await fetchNotifications();
+      dispatch({ type: 'SET_NOTIFICATIONS', payload: data });
+    } catch (err) {
+      showToast(err.message || 'Unable to mark notifications as read.', 'error');
+    }
+  }, [showToast]);
 
   useEffect(() => {
     if (state.user) loadNotifications();
