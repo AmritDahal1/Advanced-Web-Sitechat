@@ -119,6 +119,7 @@ export default function SiteDetail() {
   const [taskPriority, setTaskPriority] = useState('medium');
   const [taskAssignee, setTaskAssignee] = useState('');
   const [taskError, setTaskError] = useState('');
+  const [taskSubmitting, setTaskSubmitting] = useState(false);
   const [taskFilter, setTaskFilter] = useState('open');
 
   useEffect(() => {
@@ -189,6 +190,7 @@ export default function SiteDetail() {
       return;
     }
     setTaskError('');
+    setTaskSubmitting(true);
     try {
       const newTask = await createTask(siteId, taskDraft, taskPriority, taskAssignee || null);
       setTasks((prev) => [...(prev || []), newTask]);
@@ -197,6 +199,8 @@ export default function SiteDetail() {
       setTaskAssignee('');
     } catch (err) {
       showToast(err.message, 'error');
+    } finally {
+      setTaskSubmitting(false);
     }
   }
 
@@ -421,7 +425,9 @@ export default function SiteDetail() {
                     <option key={u.id} value={u.id}>{u.name}</option>
                   ))}
                 </select>
-                <button type="submit" className="btn btn-primary">Add</button>
+                <button type="submit" className="btn btn-primary" disabled={taskSubmitting}>
+                  {taskSubmitting ? 'Adding…' : 'Add'}
+                </button>
               </form>
               {taskError && <span className="field-error" id="task-error">{taskError}</span>}
 
