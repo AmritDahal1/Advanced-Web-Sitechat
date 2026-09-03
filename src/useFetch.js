@@ -11,19 +11,23 @@ export function useFetch(asyncFn, deps = []) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const isMounted = useRef(true);
+  const requestId = useRef(0);
 
   const run = useCallback(() => {
+    const currentRequest = ++requestId.current;
     setLoading(true);
     setError(null);
     asyncFn()
       .then((result) => {
-        if (isMounted.current) setData(result);
+        if (isMounted.current && currentRequest === requestId.current) setData(result);
       })
       .catch((err) => {
-        if (isMounted.current) setError(err.message || 'Something went wrong.');
+        if (isMounted.current && currentRequest === requestId.current) {
+          setError(err.message || 'Something went wrong.');
+        }
       })
       .finally(() => {
-        if (isMounted.current) setLoading(false);
+        if (isMounted.current && currentRequest === requestId.current) setLoading(false);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
