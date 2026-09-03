@@ -992,6 +992,7 @@ button {
   flex-direction: column;
   gap: 4px;
   max-width: 70%;
+  min-width: 0;
 }
 
 .chat-cluster-own .chat-cluster-body {
@@ -1058,6 +1059,7 @@ button {
 
 .chat-bubble p {
   margin: 0;
+  overflow-wrap: anywhere;
 }
 
 .chat-image-btn {
