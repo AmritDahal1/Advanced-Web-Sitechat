@@ -65,16 +65,27 @@ export function Toast() {
 
 export function Modal({ title, isOpen, onClose, children }) {
   const dialogRef = useRef(null);
+  const previousFocusRef = useRef(null);
+  const onCloseRef = useRef(onClose);
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
 
   useEffect(() => {
     if (!isOpen) return;
+    previousFocusRef.current = document.activeElement;
     const onKeyDown = (e) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') onCloseRef.current();
     };
     document.addEventListener('keydown', onKeyDown);
     dialogRef.current?.focus();
-    return () => document.removeEventListener('keydown', onKeyDown);
-  }, [isOpen, onClose]);
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+      if (previousFocusRef.current instanceof HTMLElement) previousFocusRef.current.focus();
+      previousFocusRef.current = null;
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
