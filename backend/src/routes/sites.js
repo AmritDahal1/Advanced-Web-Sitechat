@@ -11,7 +11,20 @@ function withOpenTaskCount(site) {
   const { count } = db
     .prepare('SELECT COUNT(*) AS count FROM tasks WHERE site_id = ? AND completed = 0')
     .get(site.id);
-  return { ...site, openTaskCount: count };
+  const { count: memberCount } = db
+    .prepare('SELECT COUNT(*) AS count FROM site_members WHERE site_id = ?')
+    .get(site.id);
+  return { ...site, openTaskCount: count, memberCount };
+}
+
+function getMemberIds(memberIds, currentUserId) {
+  const ids = Array.isArray(memberIds) ? memberIds : [currentUserId];
+  const uniqueIds = [...new Set(ids.map((id) => Number(id)))];
+  if (uniqueIds.some((id) => !Number.isInteger(id) || id < 1)) return null;
+  if (!uniqueIds.includes(currentUserId)) uniqueIds.push(currentUserId);
+  const placeholders = uniqueIds.map(() => '?').join(', ');
+  const users = db.prepare(`SELECT id FROM users WHERE id IN (${placeholders})`).all(...uniqueIds);
+  return users.length === uniqueIds.length ? uniqueIds : null;
 }
 
 // GET /api/sites
@@ -29,16 +42,24 @@ router.get('/:id', (req, res) => {
 
 // POST /api/sites
 router.post('/', (req, res) => {
-  const { name, address, facilityType, status = 'active' } = req.body || {};
+  const { name, address, facilityType, status = 'active', memberIds } = req.body || {};
   if (!name || !name.trim()) {
     return res.status(400).json({ error: 'Site name is required' });
   }
   if (!VALID_STATUSES.includes(status)) {
     return res.status(400).json({ error: 'Invalid site status' });
   }
-  const info = db
-    .prepare('INSERT INTO sites (name, address, facility_type, status, created_by) VALUES (?, ?, ?, ?, ?)')
-    .run(name.trim(), address || null, facilityType || null, status, req.user.id);
+  const members = getMemberIds(memberIds, req.user.id);
+  if (!members) return res.status(400).json({ error: 'Invalid site member list' });
+  const createSite = db.transaction(() => {
+    const info = db
+      .prepare('INSERT INTO sites (name, address, facility_type, status, created_by) VALUES (?, ?, ?, ?, ?)')
+      .run(name.trim(), address || null, facilityType || null, status, req.user.id);
+    const addMember = db.prepare('INSERT INTO site_members (site_id, user_id) VALUES (?, ?)');
+    members.forEach((userId) => addMember.run(info.lastInsertRowid, userId));
+    return info;
+  });
+  const info = createSite();
   const site = db.prepare('SELECT * FROM sites WHERE id = ?').get(info.lastInsertRowid);
   res.status(201).json(withOpenTaskCount(site));
 });
@@ -47,22 +68,32 @@ router.post('/', (req, res) => {
 router.put('/:id', (req, res) => {
   const existing = db.prepare('SELECT * FROM sites WHERE id = ?').get(req.params.id);
   if (!existing) return res.status(404).json({ error: 'Site not found' });
-  const { name, address, facilityType, status } = req.body || {};
+  const { name, address, facilityType, status, memberIds } = req.body || {};
   if (name !== undefined && !name.trim()) {
     return res.status(400).json({ error: 'Site name cannot be empty' });
   }
   if (status !== undefined && !VALID_STATUSES.includes(status)) {
     return res.status(400).json({ error: 'Invalid site status' });
   }
-  db.prepare(
-    'UPDATE sites SET name = ?, address = ?, facility_type = ?, status = ? WHERE id = ?'
-  ).run(
-    name !== undefined ? name.trim() : existing.name,
-    address !== undefined ? address : existing.address,
-    facilityType !== undefined ? facilityType : existing.facility_type,
-    status !== undefined ? status : existing.status,
-    req.params.id
-  );
+  const members = memberIds === undefined ? null : getMemberIds(memberIds, req.user.id);
+  if (memberIds !== undefined && !members) return res.status(400).json({ error: 'Invalid site member list' });
+  const updateSite = db.transaction(() => {
+    db.prepare(
+      'UPDATE sites SET name = ?, address = ?, facility_type = ?, status = ? WHERE id = ?'
+    ).run(
+      name !== undefined ? name.trim() : existing.name,
+      address !== undefined ? address : existing.address,
+      facilityType !== undefined ? facilityType : existing.facility_type,
+      status !== undefined ? status : existing.status,
+      req.params.id
+    );
+    if (members) {
+      db.prepare('DELETE FROM site_members WHERE site_id = ?').run(req.params.id);
+      const addMember = db.prepare('INSERT INTO site_members (site_id, user_id) VALUES (?, ?)');
+      members.forEach((userId) => addMember.run(req.params.id, userId));
+    }
+  });
+  updateSite();
   const updated = db.prepare('SELECT * FROM sites WHERE id = ?').get(req.params.id);
   res.json(withOpenTaskCount(updated));
 });

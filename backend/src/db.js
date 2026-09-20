@@ -27,6 +27,13 @@ CREATE TABLE IF NOT EXISTS sites (
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
+CREATE TABLE IF NOT EXISTS site_members (
+  site_id INTEGER NOT NULL REFERENCES sites(id) ON DELETE CASCADE,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  PRIMARY KEY (site_id, user_id)
+);
+
 CREATE TABLE IF NOT EXISTS tasks (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   site_id INTEGER NOT NULL REFERENCES sites(id) ON DELETE CASCADE,
@@ -63,5 +70,10 @@ const siteColumns = db.pragma('table_info(sites)');
 if (!siteColumns.some((column) => column.name === 'status')) {
   db.exec("ALTER TABLE sites ADD COLUMN status TEXT NOT NULL DEFAULT 'active'");
 }
+
+db.exec(`
+  INSERT OR IGNORE INTO site_members (site_id, user_id)
+  SELECT id, created_by FROM sites WHERE created_by IS NOT NULL
+`);
 
 module.exports = db;
