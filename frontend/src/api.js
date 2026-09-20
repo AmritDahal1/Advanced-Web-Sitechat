@@ -201,6 +201,13 @@ export async function fetchUsers() {
   return users; // { id, name, email, role, created_at }
 }
 
+export async function updateCurrentUser({ name, email }) {
+  return request('/users/me', {
+    method: 'PUT',
+    body: { name, email },
+  });
+}
+
 export async function toggleMessageReaction(siteId, messageId, userId) {
   const message = await request(`/messages/${messageId}/react`, { method: 'PUT' });
   return adaptMessage(message);

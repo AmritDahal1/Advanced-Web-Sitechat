@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useApp } from './AppContext';
+import { updateCurrentUser } from './api';
 
 export default function Profile() {
   const { user, theme, toggleTheme, updateUser, showToast } = useApp();
   const [form, setForm] = useState({ name: user?.name || '', email: user?.email || '' });
   const [errors, setErrors] = useState({});
+  const [saving, setSaving] = useState(false);
   const [emailAlerts, setEmailAlerts] = useState(true);
   const [smsAlerts, setSmsAlerts] = useState(false);
 
@@ -21,13 +23,23 @@ export default function Profile() {
     return errs;
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     const validationErrors = validate();
     setErrors(validationErrors);
     if (Object.keys(validationErrors).length > 0) return;
-    updateUser({ name: form.name.trim(), email: form.email.trim() });
-    showToast('Profile details saved.', 'success');
+
+    setSaving(true);
+    try {
+      const updatedUser = await updateCurrentUser({ name: form.name.trim(), email: form.email.trim() });
+      updateUser(updatedUser);
+      setForm({ name: updatedUser.name, email: updatedUser.email });
+      showToast('Profile details saved.', 'success');
+    } catch (err) {
+      showToast(err.message || 'Unable to save profile details.', 'error');
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -78,7 +90,9 @@ export default function Profile() {
               />
               {errors.email && <span className="field-error" id="profile-email-error">{errors.email}</span>}
             </div>
-            <button type="submit" className="btn btn-primary">Save changes</button>
+            <button type="submit" className="btn btn-primary" disabled={saving}>
+              {saving ? 'Saving…' : 'Save changes'}
+            </button>
           </form>
         </section>
 
