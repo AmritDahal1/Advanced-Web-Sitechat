@@ -256,7 +256,7 @@ export default function SiteDetail() {
       </p>
 
       <div className="site-cover">
-        <img src={getSiteCover(site.id)} alt="" />
+        <img src={getSiteCover(site.id, site.name)} alt="" />
         <div className="site-cover-overlay">
           <h1>{site.name}</h1>
           <p>{site.address}</p>

@@ -86,7 +86,7 @@ export default function Sites() {
             <div className="card-grid">
               {filteredSites.map((site) => (
                 <Link key={site.id} to={`/dashboard/sites/${site.id}`} className="site-card">
-                  <img className="site-card-cover" src={getSiteCover(site.id)} alt="" />
+                  <img className="site-card-cover" src={getSiteCover(site.id, site.name)} alt="" />
                   <div className="site-card-header">
                     <h3>{site.name}</h3>
                     <Badge status={site.status} />
