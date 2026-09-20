@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS sites (
   name TEXT NOT NULL,
   address TEXT,
   facility_type TEXT,
+  status TEXT NOT NULL DEFAULT 'active',
   last_activity TEXT NOT NULL DEFAULT (datetime('now')),
   created_by INTEGER REFERENCES users(id),
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
@@ -57,5 +58,10 @@ CREATE TABLE IF NOT EXISTS notifications (
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 `);
+
+const siteColumns = db.pragma('table_info(sites)');
+if (!siteColumns.some((column) => column.name === 'status')) {
+  db.exec("ALTER TABLE sites ADD COLUMN status TEXT NOT NULL DEFAULT 'active'");
+}
 
 module.exports = db;

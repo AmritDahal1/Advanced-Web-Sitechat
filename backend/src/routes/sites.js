@@ -5,6 +5,8 @@ const { requireAuth } = require('../middleware/auth');
 const router = express.Router();
 router.use(requireAuth);
 
+const VALID_STATUSES = ['active', 'paused', 'completed'];
+
 function withOpenTaskCount(site) {
   const { count } = db
     .prepare('SELECT COUNT(*) AS count FROM tasks WHERE site_id = ? AND completed = 0')
@@ -27,13 +29,16 @@ router.get('/:id', (req, res) => {
 
 // POST /api/sites
 router.post('/', (req, res) => {
-  const { name, address, facilityType } = req.body || {};
+  const { name, address, facilityType, status = 'active' } = req.body || {};
   if (!name || !name.trim()) {
     return res.status(400).json({ error: 'Site name is required' });
   }
+  if (!VALID_STATUSES.includes(status)) {
+    return res.status(400).json({ error: 'Invalid site status' });
+  }
   const info = db
-    .prepare('INSERT INTO sites (name, address, facility_type, created_by) VALUES (?, ?, ?, ?)')
-    .run(name.trim(), address || null, facilityType || null, req.user.id);
+    .prepare('INSERT INTO sites (name, address, facility_type, status, created_by) VALUES (?, ?, ?, ?, ?)')
+    .run(name.trim(), address || null, facilityType || null, status, req.user.id);
   const site = db.prepare('SELECT * FROM sites WHERE id = ?').get(info.lastInsertRowid);
   res.status(201).json(withOpenTaskCount(site));
 });
@@ -42,16 +47,20 @@ router.post('/', (req, res) => {
 router.put('/:id', (req, res) => {
   const existing = db.prepare('SELECT * FROM sites WHERE id = ?').get(req.params.id);
   if (!existing) return res.status(404).json({ error: 'Site not found' });
-  const { name, address, facilityType } = req.body || {};
+  const { name, address, facilityType, status } = req.body || {};
   if (name !== undefined && !name.trim()) {
     return res.status(400).json({ error: 'Site name cannot be empty' });
   }
+  if (status !== undefined && !VALID_STATUSES.includes(status)) {
+    return res.status(400).json({ error: 'Invalid site status' });
+  }
   db.prepare(
-    'UPDATE sites SET name = ?, address = ?, facility_type = ? WHERE id = ?'
+    'UPDATE sites SET name = ?, address = ?, facility_type = ?, status = ? WHERE id = ?'
   ).run(
     name !== undefined ? name.trim() : existing.name,
     address !== undefined ? address : existing.address,
     facilityType !== undefined ? facilityType : existing.facility_type,
+    status !== undefined ? status : existing.status,
     req.params.id
   );
   const updated = db.prepare('SELECT * FROM sites WHERE id = ?').get(req.params.id);

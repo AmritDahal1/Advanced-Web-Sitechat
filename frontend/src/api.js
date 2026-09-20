@@ -47,7 +47,7 @@ function adaptSite(s) {
     name: s.name,
     address: s.address,
     facilityType: s.facility_type,
-    status: 'active',
+    status: s.status || 'active',
     lastActivity: s.last_activity,
     tasksOpen: s.openTaskCount,
     // Per-user unread-message tracking is not yet implemented in the backend
@@ -129,6 +129,14 @@ export async function createSite({ name, address, facilityType }) {
   const site = await request('/sites', {
     method: 'POST',
     body: { name, address, facilityType },
+  });
+  return adaptSite(site);
+}
+
+export async function updateSite(siteId, updates) {
+  const site = await request(`/sites/${siteId}`, {
+    method: 'PUT',
+    body: updates,
   });
   return adaptSite(site);
 }
