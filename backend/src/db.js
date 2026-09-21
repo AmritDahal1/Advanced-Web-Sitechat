@@ -1,7 +1,7 @@
 const path = require('path');
 const Database = require('better-sqlite3');
 
-const DB_PATH = path.join(__dirname, '..', 'sitechat.db');
+const DB_PATH = process.env.SITECHAT_DB_PATH || path.join(__dirname, '..', 'sitechat.db');
 const db = new Database(DB_PATH);
 db.pragma('journal_mode = WAL');
 db.pragma('foreign_keys = ON');
