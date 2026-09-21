@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useApp } from './AppContext';
 import { updateCurrentUser } from './api';
 
@@ -7,8 +7,54 @@ export default function Profile() {
   const [form, setForm] = useState({ name: user?.name || '', email: user?.email || '' });
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
-  const [emailAlerts, setEmailAlerts] = useState(true);
-  const [smsAlerts, setSmsAlerts] = useState(false);
+  const preferenceStorageKey = user?.id
+    ? `sitechat-notification-preferences:${user.id}`
+    : null;
+
+  function readNotificationPreferences() {
+    if (!preferenceStorageKey) {
+      return { emailAlerts: true, smsAlerts: false };
+    }
+
+    try {
+      const stored = JSON.parse(
+        localStorage.getItem(preferenceStorageKey) || '{}'
+      );
+
+      return {
+        emailAlerts:
+          typeof stored.emailAlerts === 'boolean'
+            ? stored.emailAlerts
+            : true,
+        smsAlerts:
+          typeof stored.smsAlerts === 'boolean'
+            ? stored.smsAlerts
+            : false,
+      };
+    } catch {
+      return { emailAlerts: true, smsAlerts: false };
+    }
+  }
+
+  const [emailAlerts, setEmailAlerts] = useState(
+    () => readNotificationPreferences().emailAlerts
+  );
+
+  const [smsAlerts, setSmsAlerts] = useState(
+    () => readNotificationPreferences().smsAlerts
+  );
+
+  useEffect(() => {
+    if (!preferenceStorageKey) return;
+
+    localStorage.setItem(
+      preferenceStorageKey,
+      JSON.stringify({
+        emailAlerts,
+        smsAlerts,
+      })
+    );
+  }, [preferenceStorageKey, emailAlerts, smsAlerts]);
 
   function handleChange(e) {
     const { name, value } = e.target;
