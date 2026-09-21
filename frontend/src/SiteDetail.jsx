@@ -122,7 +122,7 @@ export default function SiteDetail() {
   const [draftError, setDraftError] = useState('');
   const [lightboxIndex, setLightboxIndex] = useState(null);
   const [taskDraft, setTaskDraft] = useState('');
-  const [taskPriority, setTaskPriority] = useState('medium');
+  const [taskPriority, setTaskPriority] = useState('Medium');
   const [taskAssignee, setTaskAssignee] = useState('');
   const [taskError, setTaskError] = useState('');
   const [taskSubmitting, setTaskSubmitting] = useState(false);
@@ -228,7 +228,7 @@ export default function SiteDetail() {
       const newTask = await createTask(siteId, taskDraft, taskPriority, taskAssignee || null);
       setTasks((prev) => [...(prev || []), newTask]);
       setTaskDraft('');
-      setTaskPriority('medium');
+      setTaskPriority('Medium');
       setTaskAssignee('');
     } catch (err) {
       showToast(err.message, 'error');
@@ -458,9 +458,9 @@ export default function SiteDetail() {
                 />
                 <label htmlFor="task-priority" className="sr-only">Priority</label>
                 <select id="task-priority" value={taskPriority} onChange={(e) => setTaskPriority(e.target.value)}>
-                  <option value="high">High</option>
-                  <option value="medium">Medium</option>
-                  <option value="low">Low</option>
+                  <option value="High">High</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Low">Low</option>
                 </select>
                 <label htmlFor="task-assignee" className="sr-only">Assign to</label>
                 <select id="task-assignee" value={taskAssignee} onChange={(e) => setTaskAssignee(e.target.value)}>

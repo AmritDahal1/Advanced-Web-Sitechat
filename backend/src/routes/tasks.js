@@ -32,7 +32,10 @@ router.post('/sites/:siteId/tasks', (req, res) => {
   if (typeof text !== 'string' || !text.trim()) {
     return res.status(400).json({ error: 'Task text is required' });
   }
-  const pr = VALID_PRIORITIES.includes(priority) ? priority : 'Medium';
+  const pr = priority === undefined ? 'Medium' : priority;
+  if (!VALID_PRIORITIES.includes(pr)) {
+    return res.status(400).json({ error: 'Invalid priority value' });
+  }
   const info = db
     .prepare(
       'INSERT INTO tasks (site_id, text, priority, assignee, created_by) VALUES (?, ?, ?, ?, ?)'
