@@ -86,7 +86,7 @@ export default function Sites() {
             <div className="card-grid">
               {filteredSites.map((site) => (
                 <Link key={site.id} to={`/dashboard/sites/${site.id}`} className="site-card">
-                  <img className="site-card-cover" src={getSiteCover(site.id)} alt="" />
+                  <img className="site-card-cover" src={getSiteCover(site.id, site.name)} alt="" />
                   <div className="site-card-header">
                     <h3>{site.name}</h3>
                     <Badge status={site.status} />
@@ -110,7 +110,7 @@ export default function Sites() {
 }
 
 function CreateSiteModal({ isOpen, onClose, onCreated }) {
-  const [form, setForm] = useState({ name: '', address: '', membersCount: 1 });
+  const [form, setForm] = useState({ name: '', address: '' });
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [serverError, setServerError] = useState('');
@@ -125,9 +125,6 @@ function CreateSiteModal({ isOpen, onClose, onCreated }) {
     const errs = {};
     if (!form.name.trim()) errs.name = 'Site name is required.';
     if (!form.address.trim()) errs.address = 'Address is required.';
-    if (!form.membersCount || Number(form.membersCount) < 1) {
-      errs.membersCount = 'At least 1 team member is required.';
-    }
     return errs;
   }
 
@@ -142,7 +139,7 @@ function CreateSiteModal({ isOpen, onClose, onCreated }) {
     try {
       const newSite = await createSite(form);
       onCreated(newSite);
-      setForm({ name: '', address: '', membersCount: 1 });
+      setForm({ name: '', address: '' });
     } catch (err) {
       setServerError(err.message);
     } finally {
@@ -177,21 +174,6 @@ function CreateSiteModal({ isOpen, onClose, onCreated }) {
           />
           {errors.address && <span className="field-error" id="site-address-error">{errors.address}</span>}
         </div>
-        <div className="form-field">
-          <label htmlFor="site-members">Team members</label>
-          <input
-            id="site-members"
-            name="membersCount"
-            type="number"
-            min="1"
-            value={form.membersCount}
-            onChange={handleChange}
-            aria-invalid={!!errors.membersCount}
-            aria-describedby={errors.membersCount ? 'site-members-error' : undefined}
-          />
-          {errors.membersCount && <span className="field-error" id="site-members-error">{errors.membersCount}</span>}
-        </div>
-
         {serverError && <div className="error-box" role="alert">⚠ {serverError}</div>}
 
         <div className="modal-actions">

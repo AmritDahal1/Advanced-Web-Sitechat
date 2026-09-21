@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Logo } from './UI';
+import { getFacilityCover } from './helpers';
 
 const APP_PREVIEW = [
   { icon: '🏢', title: 'Sites', desc: 'Every job site your crew works, in one list.' },
@@ -9,26 +10,10 @@ const APP_PREVIEW = [
 ];
 
 const FACILITIES = [
-  {
-    label: 'Commercial offices',
-    tag: 'Towers & HQs',
-    img: 'https://images.unsplash.com/photo-1660893978186-04bb33247dc0?auto=format&fit=crop&w=800&q=70'
-  },
-  {
-    label: 'Retail & shopping centres',
-    tag: 'High-traffic floors',
-    img: 'https://images.unsplash.com/photo-1655516557079-a969d3509876?auto=format&fit=crop&w=800&q=70'
-  },
-  {
-    label: 'Healthcare facilities',
-    tag: 'Clinical hygiene',
-    img: 'https://images.unsplash.com/photo-1519494140681-8b17d830a3e9?auto=format&fit=crop&w=800&q=70'
-  },
-  {
-    label: 'Education campuses',
-    tag: 'Shared spaces',
-    img: 'https://images.unsplash.com/photo-1659275136863-6f27b069e1f7?auto=format&fit=crop&w=800&q=70'
-  }
+  { label: 'Commercial offices', tag: 'Towers & HQs' },
+  { label: 'Retail & shopping centres', tag: 'High-traffic floors' },
+  { label: 'Healthcare facilities', tag: 'Clinical hygiene' },
+  { label: 'Education campuses', tag: 'Shared spaces' }
 ];
 
 const FEATURES = [
@@ -138,7 +123,7 @@ export default function Home() {
         <div className="facility-grid">
           {FACILITIES.map((f) => (
             <div className="facility-card" key={f.label}>
-              <img src={f.img} alt={f.label} loading="lazy" />
+              <img src={getFacilityCover(f.label)} alt={f.label} loading="lazy" />
               <div className="facility-card-label">
                 <span>{f.tag}</span>
                 <strong>{f.label}</strong>
@@ -220,7 +205,7 @@ export default function Home() {
           <div>
             <h4>Project</h4>
             <ul>
-              <li>ICT930 Assessment 2</li>
+              <li>ICT930 Assessment 3</li>
               <li>MIT ACT · Crennotech</li>
             </ul>
           </div>
