@@ -51,10 +51,7 @@ function adaptSite(s) {
     membersCount: s.memberCount || 0,
     lastActivity: s.last_activity,
     tasksOpen: s.openTaskCount,
-    // Per-user unread-message tracking is not yet implemented in the backend
-    // (see "Future Enhancements" in the report) - default to 0 rather than
-    // fabricating a number, so the UI shows an honest state instead of NaN.
-    unreadCount: 0,
+    unreadCount: Number(s.unreadCount),
   };
 }
 
@@ -145,6 +142,10 @@ export async function updateSite(siteId, updates) {
 export async function fetchMessages(siteId) {
   const messages = await request(`/sites/${siteId}/messages`);
   return messages.map(adaptMessage);
+}
+
+export async function markSiteMessagesRead(siteId) {
+  await request(`/sites/${siteId}/messages/read`, { method: 'PUT' });
 }
 
 export async function sendMessage(siteId, userId, text, image) {

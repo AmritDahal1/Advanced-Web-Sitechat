@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useFetch } from './useFetch';
 import {
   fetchMessages,
+  markSiteMessagesRead,
   fetchSiteById,
   fetchUsers,
   sendMessage,
@@ -91,8 +92,9 @@ export default function SiteDetail() {
   const { user, showToast } = useApp();
   const bottomRef = useRef(null);
   const fileInputRef = useRef(null);
+  const markedReadSiteRef = useRef(null);
 
-  const { data: site, loading: siteLoading, error: siteError, refetch: refetchSite } = useFetch(
+  const { data: site, loading: siteLoading, error: siteError, refetch: refetchSite, setData: setSite } = useFetch(
     () => fetchSiteById(siteId),
     [siteId]
   );
@@ -129,6 +131,18 @@ export default function SiteDetail() {
   useEffect(() => {
     if (activeTab === 'chat') bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, activeTab]);
+
+  useEffect(() => {
+    if (activeTab !== 'chat' || messagesLoading || messagesError || !messages) return;
+    if (markedReadSiteRef.current === siteId) return;
+    markedReadSiteRef.current = siteId;
+    markSiteMessagesRead(siteId)
+      .then(() => setSite((previous) => (previous ? { ...previous, unreadCount: 0 } : previous)))
+      .catch((err) => {
+        markedReadSiteRef.current = null;
+        showToast(err.message || 'Unable to mark messages as read.', 'error');
+      });
+  }, [activeTab, messages, messagesError, messagesLoading, setSite, showToast, siteId]);
 
   function userFor(userId) {
     return users?.find((u) => u.id === userId) || { name: 'Unknown user', avatarColor: '#94a3b8' };
