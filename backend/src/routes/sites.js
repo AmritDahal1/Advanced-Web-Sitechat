@@ -18,6 +18,22 @@ function withOpenTaskCount(site) {
   return { ...site, openTaskCount: count, memberCount };
 }
 
+function withUserUnreadCount(site, userId) {
+  const readState = db
+    .prepare('SELECT last_read_at FROM site_message_reads WHERE site_id = ? AND user_id = ?')
+    .get(site.id, userId);
+  const unread = db
+    .prepare(`
+      SELECT COUNT(*) AS count
+      FROM messages
+      WHERE site_id = ?
+        AND user_id != ?
+        AND (? IS NULL OR created_at > ?)
+    `)
+    .get(site.id, userId, readState?.last_read_at || null, readState?.last_read_at || null);
+  return { ...site, unreadCount: unread.count };
+}
+
 function getMemberIds(memberIds, currentUserId) {
   const ids = Array.isArray(memberIds) ? memberIds : [currentUserId];
   const uniqueIds = [...new Set(ids.map((id) => Number(id)))];
@@ -31,7 +47,7 @@ function getMemberIds(memberIds, currentUserId) {
 // GET /api/sites
 router.get('/', (req, res) => {
   const sites = db.prepare('SELECT * FROM sites ORDER BY last_activity DESC').all();
-  res.json(sites.map(withOpenTaskCount));
+  res.json(sites.map((site) => withUserUnreadCount(withOpenTaskCount(site), req.user.id)));
 });
 
 // GET /api/sites/:id
@@ -40,7 +56,7 @@ router.get('/:id', (req, res) => {
   if (siteId === null) return res.status(400).json({ error: 'Invalid site ID' });
   const site = db.prepare('SELECT * FROM sites WHERE id = ?').get(siteId);
   if (!site) return res.status(404).json({ error: 'Site not found' });
-  res.json(withOpenTaskCount(site));
+  res.json(withUserUnreadCount(withOpenTaskCount(site), req.user.id));
 });
 
 // POST /api/sites

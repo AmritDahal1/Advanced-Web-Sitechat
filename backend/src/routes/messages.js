@@ -19,6 +19,21 @@ router.get('/sites/:siteId/messages', (req, res) => {
   res.json(messages);
 });
 
+// PUT /api/sites/:siteId/messages/read
+router.put('/sites/:siteId/messages/read', (req, res) => {
+  const siteId = parsePositiveInt(req.params.siteId);
+  if (siteId === null) return res.status(400).json({ error: 'Invalid site ID' });
+  const site = db.prepare('SELECT id FROM sites WHERE id = ?').get(siteId);
+  if (!site) return res.status(404).json({ error: 'Site not found' });
+
+  db.prepare(`
+    INSERT INTO site_message_reads (user_id, site_id, last_read_at)
+    VALUES (?, ?, datetime('now'))
+    ON CONFLICT(user_id, site_id) DO UPDATE SET last_read_at = excluded.last_read_at
+  `).run(req.user.id, siteId);
+  res.status(204).send();
+});
+
 // POST /api/sites/:siteId/messages
 router.post('/sites/:siteId/messages', (req, res) => {
   const site = db.prepare('SELECT id FROM sites WHERE id = ?').get(req.params.siteId);

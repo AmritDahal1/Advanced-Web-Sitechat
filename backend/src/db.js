@@ -56,6 +56,13 @@ CREATE TABLE IF NOT EXISTS messages (
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
+CREATE TABLE IF NOT EXISTS site_message_reads (
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  site_id INTEGER NOT NULL REFERENCES sites(id) ON DELETE CASCADE,
+  last_read_at TEXT NOT NULL,
+  PRIMARY KEY (user_id, site_id)
+);
+
 CREATE TABLE IF NOT EXISTS notifications (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   user_id INTEGER REFERENCES users(id),
