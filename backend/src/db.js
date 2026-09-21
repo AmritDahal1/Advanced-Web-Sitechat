@@ -68,6 +68,7 @@ CREATE TABLE IF NOT EXISTS notifications (
   user_id INTEGER REFERENCES users(id),
   site_id INTEGER REFERENCES sites(id),
   message TEXT NOT NULL,
+  type TEXT NOT NULL DEFAULT 'system',
   read INTEGER NOT NULL DEFAULT 0,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
@@ -76,6 +77,11 @@ CREATE TABLE IF NOT EXISTS notifications (
 const siteColumns = db.pragma('table_info(sites)');
 if (!siteColumns.some((column) => column.name === 'status')) {
   db.exec("ALTER TABLE sites ADD COLUMN status TEXT NOT NULL DEFAULT 'active'");
+}
+
+const notificationColumns = db.pragma('table_info(notifications)');
+if (!notificationColumns.some((column) => column.name === 'type')) {
+  db.exec("ALTER TABLE notifications ADD COLUMN type TEXT NOT NULL DEFAULT 'system'");
 }
 
 db.exec(`

@@ -84,6 +84,7 @@ function adaptNotification(n) {
     id: n.id,
     siteId: n.site_id,
     text: n.message,
+    type: n.type || 'system',
     read: !!n.read,
     time: n.created_at,
   };
