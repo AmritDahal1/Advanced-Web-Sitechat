@@ -2045,3 +2045,150 @@ button {
     grid-template-columns: 1fr;
   }
 }
+
+/* ---------- SiteDetail small-screen usability ---------- */
+@media (max-width: 480px) {
+  .site-page,
+  .site-main {
+    min-width: 0;
+  }
+
+  .site-cover {
+    height: 130px;
+  }
+
+  .site-cover-overlay {
+    padding: 12px 14px;
+  }
+
+  .site-cover-overlay h1 {
+    font-size: 1.15rem;
+    overflow-wrap: anywhere;
+  }
+
+  .site-cover-overlay p {
+    overflow-wrap: anywhere;
+  }
+
+  .site-tabs {
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex-wrap: nowrap;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .site-tab {
+    flex: 0 0 auto;
+    margin-right: 8px;
+    min-height: 44px;
+  }
+
+  .chat-page {
+    height: auto;
+    min-height: 65vh;
+  }
+
+  .chat-window {
+    min-height: 52vh;
+    padding: 10px;
+  }
+
+  .chat-cluster {
+    gap: 7px;
+  }
+
+  .chat-cluster-body {
+    max-width: calc(100% - 38px);
+  }
+
+  .chat-cluster-meta {
+    max-width: 100%;
+    flex-wrap: wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .chat-bubble {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  .chat-image {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .chat-composer-row {
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
+
+  .chat-composer-row .icon-btn {
+    flex: 0 0 44px;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .chat-composer-row input[type='text'] {
+    flex: 1 1 calc(100% - 52px);
+    min-width: 0;
+  }
+
+  .chat-composer-row .btn-primary {
+    flex: 1 1 100%;
+    min-height: 44px;
+  }
+
+  .task-add-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .task-add-form input[type='text'],
+  .task-add-form select,
+  .task-add-form .btn {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .task-add-form .btn {
+    min-height: 44px;
+  }
+
+  .task-row {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    padding: 8px 10px;
+  }
+
+  .task-checkbox {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  .task-checkbox span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .task-row-meta {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .lightbox-image {
+    width: 100%;
+    max-height: 70vh;
+    object-fit: contain;
+  }
+
+  .lightbox-nav {
+    flex-wrap: wrap;
+  }
+
+  .lightbox-nav .btn {
+    flex: 1 1 120px;
+    min-height: 44px;
+  }
+}
