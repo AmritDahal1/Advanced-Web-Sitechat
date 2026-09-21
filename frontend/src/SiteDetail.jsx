@@ -6,6 +6,7 @@ import {
   fetchSiteById,
   fetchUsers,
   sendMessage,
+  deleteMessage,
   toggleMessageReaction,
   fetchTasks,
   createTask,
@@ -115,6 +116,7 @@ export default function SiteDetail() {
   const [draft, setDraft] = useState('');
   const [pendingImage, setPendingImage] = useState(null);
   const [sending, setSending] = useState(false);
+  const [deletingMessageId, setDeletingMessageId] = useState(null);
   const [draftError, setDraftError] = useState('');
   const [lightboxIndex, setLightboxIndex] = useState(null);
   const [taskDraft, setTaskDraft] = useState('');
@@ -182,6 +184,21 @@ export default function SiteDetail() {
     } catch (err) {
       setMessages(previousMessages);
       showToast(err.message, 'error');
+    }
+  }
+
+  async function handleDeleteMessage(message) {
+    if (!window.confirm('Delete this message?')) return;
+    setDeletingMessageId(message.id);
+    try {
+      await deleteMessage(message.id);
+      setMessages((prev) => (prev || []).filter((item) => item.id !== message.id));
+      showToast('Message deleted.', 'success');
+    } catch (err) {
+      showToast(err.message || 'Unable to delete message.', 'error');
+      refetchMessages();
+    } finally {
+      setDeletingMessageId(null);
     }
   }
 
@@ -334,6 +351,17 @@ export default function SiteDetail() {
                                         >
                                           👍 {reactions.length > 0 && reactions.length}
                                         </button>
+                                        {(isOwn || user.role === 'admin') && (
+                                          <button
+                                            type="button"
+                                            className="like-btn"
+                                            onClick={() => handleDeleteMessage(m)}
+                                            disabled={deletingMessageId === m.id}
+                                            aria-label={`Delete message from ${author.name}`}
+                                          >
+                                            {deletingMessageId === m.id ? 'Deleting…' : 'Delete'}
+                                          </button>
+                                        )}
                                       </div>
                                     </div>
                                   );
