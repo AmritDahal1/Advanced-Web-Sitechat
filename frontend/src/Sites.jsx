@@ -23,9 +23,17 @@ export default function Sites() {
   const filteredSites = useMemo(() => {
     if (!sites) return [];
     return sites.filter((site) => {
-      const matchesSearch =
-        site.name.toLowerCase().includes(search.toLowerCase()) ||
-        site.address.toLowerCase().includes(search.toLowerCase());
+      const query = search.trim().toLowerCase();
+      const searchableText = [
+        site?.name,
+        site?.address,
+        site?.facilityType
+      ]
+        .filter((value) => typeof value === 'string')
+        .join(' ')
+        .toLowerCase();
+
+      const matchesSearch = !query || searchableText.includes(query);
       const matchesStatus = statusFilter === 'all' || site.status === statusFilter;
       return matchesSearch && matchesStatus;
     });
@@ -81,7 +89,11 @@ export default function Sites() {
       {!loading && !error && (
         <>
           {filteredSites.length === 0 ? (
-            <p className="muted empty-state">No sites match your search.</p>
+            <p className="muted empty-state">
+              {(sites || []).length === 0
+                ? 'No sites have been added yet.'
+                : 'No sites match your current search or filter.'}
+            </p>
           ) : (
             <div className="card-grid">
               {filteredSites.map((site) => (
