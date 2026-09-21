@@ -155,6 +155,11 @@ export async function sendMessage(siteId, userId, text, image) {
   return adaptMessage(message);
 }
 
+export async function deleteMessage(messageId) {
+  await request(`/messages/${messageId}`, { method: 'DELETE' });
+  return { id: messageId };
+}
+
 export async function fetchNotifications() {
   const notifications = await request('/notifications');
   return notifications.map(adaptNotification);

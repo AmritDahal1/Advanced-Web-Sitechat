@@ -1,6 +1,7 @@
 const express = require('express');
 const db = require('../db');
 const { requireAuth } = require('../middleware/auth');
+const { parsePositiveInt } = require('./validation');
 
 const router = express.Router();
 router.use(requireAuth);
@@ -45,6 +46,21 @@ router.post('/sites/:siteId/messages', (req, res) => {
   db.prepare('UPDATE sites SET last_activity = datetime(\'now\') WHERE id = ?').run(req.params.siteId);
   const message = db.prepare('SELECT * FROM messages WHERE id = ?').get(info.lastInsertRowid);
   res.status(201).json(message);
+});
+
+// DELETE /api/messages/:id
+router.delete('/messages/:id', (req, res) => {
+  const messageId = parsePositiveInt(req.params.id);
+  if (messageId === null) return res.status(400).json({ error: 'Invalid message ID' });
+
+  const message = db.prepare('SELECT id, user_id FROM messages WHERE id = ?').get(messageId);
+  if (!message) return res.status(404).json({ error: 'Message not found' });
+
+  const canDelete = message.user_id === req.user.id || req.user.role === 'admin';
+  if (!canDelete) return res.status(403).json({ error: 'You cannot delete this message' });
+
+  db.prepare('DELETE FROM messages WHERE id = ?').run(messageId);
+  res.status(204).send();
 });
 
 // PUT /api/messages/:id/react  (toggle current user's reaction on a message)
