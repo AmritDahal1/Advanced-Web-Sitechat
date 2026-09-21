@@ -2,6 +2,7 @@ const express = require('express');
 const db = require('../db');
 const { requireAuth } = require('../middleware/auth');
 const { parsePositiveInt } = require('./validation');
+const { notifySiteMembers } = require('../notifications');
 
 const router = express.Router();
 router.use(requireAuth);
@@ -59,6 +60,12 @@ router.post('/sites/:siteId/messages', (req, res) => {
     .run(req.params.siteId, req.user.id, req.user.name, messageText || null, attachment);
 
   db.prepare('UPDATE sites SET last_activity = datetime(\'now\') WHERE id = ?').run(req.params.siteId);
+  notifySiteMembers({
+    siteId: req.params.siteId,
+    actorId: req.user.id,
+    type: 'message',
+    message: `${req.user.name} posted a new site message`,
+  });
   const message = db.prepare('SELECT * FROM messages WHERE id = ?').get(info.lastInsertRowid);
   res.status(201).json(message);
 });

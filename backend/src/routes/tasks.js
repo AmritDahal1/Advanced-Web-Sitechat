@@ -2,6 +2,7 @@ const express = require('express');
 const db = require('../db');
 const { requireAuth } = require('../middleware/auth');
 const { parsePositiveInt } = require('./validation');
+const { notifySiteMembers } = require('../notifications');
 
 const router = express.Router();
 router.use(requireAuth);
@@ -39,6 +40,12 @@ router.post('/sites/:siteId/tasks', (req, res) => {
     .run(siteId, text.trim(), pr, assignee || null, req.user.id);
 
   db.prepare('UPDATE sites SET last_activity = datetime(\'now\') WHERE id = ?').run(siteId);
+  notifySiteMembers({
+    siteId,
+    actorId: req.user.id,
+    type: 'task',
+    message: `${req.user.name} created task: ${text.trim()}`,
+  });
   const task = db.prepare('SELECT * FROM tasks WHERE id = ?').get(info.lastInsertRowid);
   res.status(201).json(task);
 });
@@ -81,6 +88,12 @@ router.put('/tasks/:id/toggle', (req, res) => {
   if (!existing) return res.status(404).json({ error: 'Task not found' });
   const next = existing.completed ? 0 : 1;
   db.prepare('UPDATE tasks SET completed = ? WHERE id = ?').run(next, taskId);
+  notifySiteMembers({
+    siteId: existing.site_id,
+    actorId: req.user.id,
+    type: 'task',
+    message: `${req.user.name} marked task ${next ? 'complete' : 'open'}: ${existing.text}`,
+  });
   res.json(db.prepare('SELECT * FROM tasks WHERE id = ?').get(taskId));
 });
 
