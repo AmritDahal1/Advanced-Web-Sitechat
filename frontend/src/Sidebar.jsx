@@ -9,7 +9,7 @@ const LINKS = [
 
 export default function Sidebar({ isOpen, onNavigate }) {
   return (
-    <aside className={`sidebar ${isOpen ? 'sidebar-open' : ''}`} aria-label="Primary">
+    <aside id="primary-navigation" className={`sidebar ${isOpen ? 'sidebar-open' : ''}`} aria-label="Primary">
       <nav>
         <ul>
           {LINKS.map((link) => (

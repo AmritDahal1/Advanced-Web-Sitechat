@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useApp } from './AppContext';
 import { Logo } from './UI';
 
-export default function Navbar({ onMenuClick }) {
+export default function Navbar({ onMenuClick, menuOpen, menuButtonRef }) {
   const { user, logout, theme, toggleTheme, unreadCount } = useApp();
   const navigate = useNavigate();
 
@@ -15,9 +15,12 @@ export default function Navbar({ onMenuClick }) {
     <header className="navbar">
       <div className="navbar-left">
         <button
+          ref={menuButtonRef}
           type="button"
           className="icon-btn hide-desktop"
           aria-label="Toggle navigation menu"
+          aria-expanded={menuOpen}
+          aria-controls="primary-navigation"
           onClick={onMenuClick}
         >
           ☰
