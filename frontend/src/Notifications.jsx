@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useApp } from './AppContext';
-import { LoadingSpinner } from './UI';
+import { ErrorMessage, LoadingSpinner } from './UI';
 
 const TYPE_ICON = { message: '💬', task: '✅', status: '📋' };
 
@@ -15,13 +15,23 @@ function formatTime(iso) {
 }
 
 export default function Notifications() {
-  const { notifications, notificationsLoading, notificationsError, loadNotifications, markRead, markAllRead } = useApp();
+  const { notifications, notificationsLoading, notificationsError, loadNotifications, markRead, markAllRead, dismissNotification } = useApp();
   const [showUnreadOnly, setShowUnreadOnly] = useState(false);
+  const [dismissingId, setDismissingId] = useState(null);
 
   const visibleNotifications = useMemo(
     () => (showUnreadOnly ? notifications.filter((n) => !n.read) : notifications),
     [notifications, showUnreadOnly]
   );
+
+  async function handleDismiss(id) {
+    setDismissingId(id);
+    try {
+      await dismissNotification(id);
+    } finally {
+      setDismissingId(null);
+    }
+  }
 
   return (
     <div className="page">
@@ -75,6 +85,15 @@ export default function Notifications() {
                   Mark read
                 </button>
               )}
+              <button
+                type="button"
+                className="btn btn-ghost btn-sm"
+                onClick={() => handleDismiss(n.id)}
+                disabled={dismissingId === n.id}
+                aria-label={`Dismiss notification: ${n.text}`}
+              >
+                {dismissingId === n.id ? 'Dismissing…' : 'Dismiss'}
+              </button>
             </li>
           ))}
         </ul>

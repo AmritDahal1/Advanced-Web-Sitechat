@@ -2,7 +2,8 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useReducer 
 import {
   fetchNotifications,
   markAllNotificationsRead,
-  markNotificationRead
+  markNotificationRead,
+  deleteNotification
 } from './api';
 
 const AppContext = createContext(null);
@@ -30,6 +31,8 @@ function reducer(state, action) {
       return { ...state, notifications: action.payload, notificationsLoading: false, notificationsError: null };
     case 'MARK_ALL_NOTIFICATIONS_READ':
       return { ...state, notifications: state.notifications.map((notification) => ({ ...notification, read: true })) };
+    case 'REMOVE_NOTIFICATION':
+      return { ...state, notifications: state.notifications.filter((notification) => notification.id !== action.payload) };
     case 'SET_NOTIFICATIONS_LOADING':
       return { ...state, notificationsLoading: true, notificationsError: null };
     case 'SET_NOTIFICATIONS_ERROR':
@@ -108,6 +111,15 @@ export function AppProvider({ children }) {
     }
   }, [showToast]);
 
+  const dismissNotification = useCallback(async (id) => {
+    try {
+      await deleteNotification(id);
+      dispatch({ type: 'REMOVE_NOTIFICATION', payload: id });
+    } catch (err) {
+      showToast(err.message || 'Unable to dismiss notification.', 'error');
+    }
+  }, [showToast]);
+
   useEffect(() => {
     if (state.user) loadNotifications();
   }, [state.user, loadNotifications]);
@@ -129,9 +141,10 @@ export function AppProvider({ children }) {
       clearToast,
       loadNotifications,
       markRead,
-      markAllRead
+      markAllRead,
+      dismissNotification
     }),
-    [state, unreadCount, login, updateUser, logout, toggleTheme, showToast, clearToast, loadNotifications, markRead, markAllRead]
+    [state, unreadCount, login, updateUser, logout, toggleTheme, showToast, clearToast, loadNotifications, markRead, markAllRead, dismissNotification]
   );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

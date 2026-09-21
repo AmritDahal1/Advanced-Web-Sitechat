@@ -172,6 +172,11 @@ export async function markNotificationRead(notificationId) {
   return adaptNotification(n);
 }
 
+export async function deleteNotification(notificationId) {
+  await request(`/notifications/${notificationId}`, { method: 'DELETE' });
+  return { id: notificationId };
+}
+
 export async function markAllNotificationsRead() {
   return request('/notifications/read-all', { method: 'PUT' });
 }
