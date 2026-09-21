@@ -1,6 +1,7 @@
 const express = require('express');
 const db = require('../db');
 const { requireAuth } = require('../middleware/auth');
+const { parsePositiveInt } = require('./validation');
 
 const router = express.Router();
 router.use(requireAuth);
@@ -35,7 +36,9 @@ router.get('/', (req, res) => {
 
 // GET /api/sites/:id
 router.get('/:id', (req, res) => {
-  const site = db.prepare('SELECT * FROM sites WHERE id = ?').get(req.params.id);
+  const siteId = parsePositiveInt(req.params.id);
+  if (siteId === null) return res.status(400).json({ error: 'Invalid site ID' });
+  const site = db.prepare('SELECT * FROM sites WHERE id = ?').get(siteId);
   if (!site) return res.status(404).json({ error: 'Site not found' });
   res.json(withOpenTaskCount(site));
 });
@@ -43,7 +46,7 @@ router.get('/:id', (req, res) => {
 // POST /api/sites
 router.post('/', (req, res) => {
   const { name, address, facilityType, status = 'active', memberIds } = req.body || {};
-  if (!name || !name.trim()) {
+  if (typeof name !== 'string' || !name.trim()) {
     return res.status(400).json({ error: 'Site name is required' });
   }
   if (!VALID_STATUSES.includes(status)) {
@@ -66,10 +69,12 @@ router.post('/', (req, res) => {
 
 // PUT /api/sites/:id
 router.put('/:id', (req, res) => {
-  const existing = db.prepare('SELECT * FROM sites WHERE id = ?').get(req.params.id);
+  const siteId = parsePositiveInt(req.params.id);
+  if (siteId === null) return res.status(400).json({ error: 'Invalid site ID' });
+  const existing = db.prepare('SELECT * FROM sites WHERE id = ?').get(siteId);
   if (!existing) return res.status(404).json({ error: 'Site not found' });
   const { name, address, facilityType, status, memberIds } = req.body || {};
-  if (name !== undefined && !name.trim()) {
+  if (name !== undefined && (typeof name !== 'string' || !name.trim())) {
     return res.status(400).json({ error: 'Site name cannot be empty' });
   }
   if (status !== undefined && !VALID_STATUSES.includes(status)) {
@@ -85,24 +90,26 @@ router.put('/:id', (req, res) => {
       address !== undefined ? address : existing.address,
       facilityType !== undefined ? facilityType : existing.facility_type,
       status !== undefined ? status : existing.status,
-      req.params.id
+      siteId
     );
     if (members) {
-      db.prepare('DELETE FROM site_members WHERE site_id = ?').run(req.params.id);
+      db.prepare('DELETE FROM site_members WHERE site_id = ?').run(siteId);
       const addMember = db.prepare('INSERT INTO site_members (site_id, user_id) VALUES (?, ?)');
-      members.forEach((userId) => addMember.run(req.params.id, userId));
+      members.forEach((userId) => addMember.run(siteId, userId));
     }
   });
   updateSite();
-  const updated = db.prepare('SELECT * FROM sites WHERE id = ?').get(req.params.id);
+  const updated = db.prepare('SELECT * FROM sites WHERE id = ?').get(siteId);
   res.json(withOpenTaskCount(updated));
 });
 
 // DELETE /api/sites/:id
 router.delete('/:id', (req, res) => {
-  const existing = db.prepare('SELECT * FROM sites WHERE id = ?').get(req.params.id);
+  const siteId = parsePositiveInt(req.params.id);
+  if (siteId === null) return res.status(400).json({ error: 'Invalid site ID' });
+  const existing = db.prepare('SELECT * FROM sites WHERE id = ?').get(siteId);
   if (!existing) return res.status(404).json({ error: 'Site not found' });
-  db.prepare('DELETE FROM sites WHERE id = ?').run(req.params.id);
+  db.prepare('DELETE FROM sites WHERE id = ?').run(siteId);
   res.status(204).send();
 });
 
