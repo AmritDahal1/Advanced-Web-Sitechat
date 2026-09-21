@@ -173,12 +173,7 @@ export async function markNotificationRead(notificationId) {
 }
 
 export async function markAllNotificationsRead() {
-  const notifications = await request('/notifications');
-  await Promise.all(
-    notifications.filter((n) => !n.read).map((n) => request(`/notifications/${n.id}/read`, { method: 'PUT' }))
-  );
-  const refreshed = await request('/notifications');
-  return refreshed.map(adaptNotification);
+  return request('/notifications/read-all', { method: 'PUT' });
 }
 
 export async function fetchTasks(siteId) {

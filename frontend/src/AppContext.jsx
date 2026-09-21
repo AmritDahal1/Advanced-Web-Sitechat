@@ -28,6 +28,8 @@ function reducer(state, action) {
       return { ...state, theme: state.theme === 'light' ? 'dark' : 'light' };
     case 'SET_NOTIFICATIONS':
       return { ...state, notifications: action.payload, notificationsLoading: false, notificationsError: null };
+    case 'MARK_ALL_NOTIFICATIONS_READ':
+      return { ...state, notifications: state.notifications.map((notification) => ({ ...notification, read: true })) };
     case 'SET_NOTIFICATIONS_LOADING':
       return { ...state, notificationsLoading: true, notificationsError: null };
     case 'SET_NOTIFICATIONS_ERROR':
@@ -100,8 +102,7 @@ export function AppProvider({ children }) {
   const markAllRead = useCallback(async () => {
     try {
       await markAllNotificationsRead();
-      const data = await fetchNotifications();
-      dispatch({ type: 'SET_NOTIFICATIONS', payload: data });
+      dispatch({ type: 'MARK_ALL_NOTIFICATIONS_READ' });
     } catch (err) {
       showToast(err.message || 'Unable to mark notifications as read.', 'error');
     }

@@ -13,6 +13,14 @@ router.get('/', (req, res) => {
   res.json(notifications);
 });
 
+// PUT /api/notifications/read-all
+router.put('/read-all', (req, res) => {
+  const result = db
+    .prepare('UPDATE notifications SET read = 1 WHERE user_id = ? AND read = 0')
+    .run(req.user.id);
+  res.json({ updatedCount: result.changes });
+});
+
 // PUT /api/notifications/:id/read
 router.put('/:id/read', (req, res) => {
   const existing = db
