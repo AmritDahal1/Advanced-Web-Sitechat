@@ -1,6 +1,13 @@
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'sitechat-dev-secret-change-in-production';
+const JWT_SECRET = process.env.JWT_SECRET || (
+  process.env.NODE_ENV === 'production' ? null : crypto.randomBytes(32).toString('hex')
+);
+
+if (!JWT_SECRET) {
+  throw new Error('JWT_SECRET must be configured in production');
+}
 
 function requireAuth(req, res, next) {
   const header = req.headers.authorization || '';

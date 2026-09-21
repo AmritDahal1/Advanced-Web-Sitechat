@@ -15,14 +15,20 @@ function signToken(user) {
 }
 
 router.post('/register', (req, res) => {
-  const { name, email, password, role } = req.body || {};
+  const name = typeof req.body?.name === 'string' ? req.body.name.trim() : '';
+  const email = typeof req.body?.email === 'string' ? req.body.email.trim().toLowerCase() : '';
+  const password = typeof req.body?.password === 'string' ? req.body.password : '';
+  const role = req.body?.role;
   if (!name || !email || !password) {
     return res.status(400).json({ error: 'name, email and password are required' });
+  }
+  if (name.length > 100 || !/^\S+@\S+\.\S+$/.test(email)) {
+    return res.status(400).json({ error: 'Enter a valid name and email address' });
   }
   if (password.length < 6) {
     return res.status(400).json({ error: 'Password must be at least 6 characters' });
   }
-  const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
+  const existing = db.prepare('SELECT id FROM users WHERE lower(email) = lower(?)').get(email);
   if (existing) {
     return res.status(409).json({ error: 'An account with this email already exists' });
   }
@@ -37,7 +43,8 @@ router.post('/register', (req, res) => {
 });
 
 router.post('/login', (req, res) => {
-  const { email, password } = req.body || {};
+  const email = typeof req.body?.email === 'string' ? req.body.email.trim().toLowerCase() : '';
+  const password = typeof req.body?.password === 'string' ? req.body.password : '';
   if (!email || !password) {
     return res.status(400).json({ error: 'email and password are required' });
   }
