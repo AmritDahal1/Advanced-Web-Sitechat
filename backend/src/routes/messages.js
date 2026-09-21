@@ -5,6 +5,9 @@ const { requireAuth } = require('../middleware/auth');
 const router = express.Router();
 router.use(requireAuth);
 
+const MAX_ATTACHMENT_DATA_URL_BYTES = 5 * 1024 * 1024;
+const IMAGE_DATA_URL_PATTERN = /^data:image\/(?:png|jpe?g|gif|webp);base64,[A-Za-z0-9+/]+={0,2}$/i;
+
 // GET /api/sites/:siteId/messages
 router.get('/sites/:siteId/messages', (req, res) => {
   const site = db.prepare('SELECT id FROM sites WHERE id = ?').get(req.params.siteId);
@@ -21,14 +24,23 @@ router.post('/sites/:siteId/messages', (req, res) => {
   if (!site) return res.status(404).json({ error: 'Site not found' });
 
   const { text, attachmentDataUrl } = req.body || {};
-  if ((!text || !text.trim()) && !attachmentDataUrl) {
+  const messageText = typeof text === 'string' ? text.trim() : '';
+  const attachment = attachmentDataUrl || null;
+  if (!messageText && !attachment) {
     return res.status(400).json({ error: 'Message must contain text or an attachment' });
+  }
+  if (attachment && (
+    typeof attachment !== 'string' ||
+    Buffer.byteLength(attachment, 'utf8') > MAX_ATTACHMENT_DATA_URL_BYTES ||
+    !IMAGE_DATA_URL_PATTERN.test(attachment)
+  )) {
+    return res.status(400).json({ error: 'Attachment must be a valid PNG, JPEG, GIF, or WebP image under 5MB' });
   }
   const info = db
     .prepare(
       'INSERT INTO messages (site_id, user_id, sender_name, text, attachment_data_url) VALUES (?, ?, ?, ?, ?)'
     )
-    .run(req.params.siteId, req.user.id, req.user.name, text ? text.trim() : null, attachmentDataUrl || null);
+    .run(req.params.siteId, req.user.id, req.user.name, messageText || null, attachment);
 
   db.prepare('UPDATE sites SET last_activity = datetime(\'now\') WHERE id = ?').run(req.params.siteId);
   const message = db.prepare('SELECT * FROM messages WHERE id = ?').get(info.lastInsertRowid);
